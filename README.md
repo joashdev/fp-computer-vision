@@ -16,5 +16,8 @@ git clone this-repo-link
 ```
 ## Install the following modules
 ```sh
-pip3 install opencv-python pysimpleguiqt
+# (system-level)
+tesseract
+# (pip-level) 
+opencv-python pysimpleguiqt pytesseract
 ```
