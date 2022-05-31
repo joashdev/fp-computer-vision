@@ -160,7 +160,7 @@ file_type = [
 
 column_output = [
     
-    [sg.Text("Converted Image Here")],
+    [sg.Text("Converted Image Here", key="-OUTPUTTEXT-")],
     [sg.Image(key="-OUTPUTIMAGE-")],
     [sg.Button("Save Image")]
     
@@ -168,6 +168,7 @@ column_output = [
 
 
 column_input = [
+    [sg.Text("No Image Converted Yet", key="-INPUTTEXT-")],
     [sg.Image(key="-IMAGE-")],
     [
         sg.Text("Image File"),
@@ -175,6 +176,7 @@ column_input = [
         sg.FileBrowse(file_types=file_type),
         sg.Button("Convert Image"),
         # sg.Button("Convert to ID")
+        
     ]
 ]
 
@@ -191,12 +193,16 @@ layout = [
 
 window = sg.Window("ID Converter", layout)
 
+counter = 0
 while True:
     event,values = window.read()
+    
+    counter += 1
     if event == "Exit" or event == sg.WIN_CLOSED:
         break
     elif event == "Convert Image":
         filename = values["-FILE-"]
+        
         if os.path.exists(filename):
             image = Image.open(values["-FILE-"])
             image.thumbnail((400,400))
@@ -275,17 +281,21 @@ while True:
             pil_image.save(bio2, format="PNG")
 
             window["-OUTPUTIMAGE-"].update(data=bio2.getvalue())
-
+            window["-OUTPUTTEXT-"].update("")
+            window["-INPUTTEXT-"].update("")
+            
             #WHAT TO DO HERE!!!
             #The goal is to send put face_result into the ID
             #Next is to put the OCR text in the ID
             #PUT the resulting ID in -OUTPUTIMAGE-
             #PUT a save button
     elif event == "Save Image":
-        filename = str(ocr_result) + "_id.png"
-        output = cv2.cvtColor(id_temp, cv2.COLOR_BGR2RGB)
-        cv2.imwrite(filename, output)
-
+        try:
+            filename = str(ocr_result) + "_id.png"
+            output = cv2.cvtColor(id_temp, cv2.COLOR_BGR2RGB)
+            cv2.imwrite(filename, output)
+        except:
+            continue
 
 window.close()
 
