@@ -104,7 +104,7 @@ while True:
             #output is this for face detection
             face_result = cv2.resize(face_result, new_size, fx=0.25, fy=0.25, interpolation=cv2.INTER_LINEAR)
 
-            window["-OUTPUTIMAGE-"].update(data=face_result)
+            # window["-OUTPUTIMAGE-"].update(data=face_result)
 
             #WHAT TO DO HERE!!!
             #The goal is to send put face_result into the ID
