@@ -3,7 +3,11 @@
 import PySimpleGUIQt as sg
 import os.path
 
-#window layout of two columns
+#Left side = browse, right side = output
+
+# file_types = [
+#     ("")
+# ]
 
 file_list_column = [
     [
@@ -13,10 +17,7 @@ file_list_column = [
     ],
 
     [
-        sg.Listbox(
-            values=[], enable_events=True, size=(40,20),
-            key = "-FILE LIST-"
-        )
+        sg.Listbox(values=[], enable_events=True, size=(40,10),key = "-FILE LIST-")
 
     ],
 
@@ -24,12 +25,12 @@ file_list_column = [
 
 image_viewer_column = [
     [sg.Text("Choose an image from the list on the left:")],
-    [sg.Text(size=(40,1), key="-ToUT-")],
-    [sg.Image(key="-IMAGE-")],
+    [sg.Text(size=(40,1), key="-TOUT-")],
+    [sg.Image(key='-IMAGE-')]
 
 ]
 
-#ful layout
+#Layout here
 
 layout = [
 
@@ -59,9 +60,20 @@ while True:
             f
             for f in file_list
             if os.path.isfile(os.path.join(folder,f))
-            and f.lower().endswith(".png")
+            and f.lower().endswith((".png", ".jpg"))
         ]
         window["-FILE LIST-"].update(fnames)
+    elif event == "-FILE LIST-":
+        try:
+            filename = os.path.join(
+                values["-FOLDER-"], values["-FILE LIST-"][0]    
+            )
+            window["-TOUT-"].update(filename)
+            window["-IMAGE-"].update(filename=filename, subsample = 4)
+            window.refresh()
+        except:
+            pass
+        
 
 window.close()
 
