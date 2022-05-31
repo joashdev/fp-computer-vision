@@ -143,7 +143,7 @@ def generateID(face, bg, text="Name Surname"):
     textsize = cv2.getTextSize(text, font, 1.5, 2)[0]
     textX = int((600 -  textsize[0])/2)
     # put the text
-    cv2.putText(bg, text, (textX, textBottomY), font, 1.5, (85, 85, 1), 2)
+    cv2.putText(bg, text, (textX, textBottomY), font, 1.5, (1, 85, 85), 2)
 
     return bg
 
