@@ -3,9 +3,56 @@ import io, os
 from PIL import Image
 import cv2
 import pytesseract as tes
+import numpy as np
 
 #for face detection
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+def face_detect(img=None):
+    #Initial Resize
+    new_size = (0, 0)
+    img = cv2.resize(img, new_size, fx=0.25, fy=0.25, interpolation=cv2.INTER_LINEAR)
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    #lets detect
+    try:
+        faces = face_cascade.detectMultiScale(img_gray, 1.1, 4)
+        img_x = 0
+        img_y = 0
+        img_w = 0
+        img_h = 0
+        for (x, y, w, h) in faces:
+
+            # cv2.rectangle(image, (x, y), (x+w, y+h), (255, 0, 0), 2)
+            img_x = x
+            img_y = y
+            img_w = w 
+            img_h = h
+
+        #readjust ys and xs by 60 pixels to accomodate whole face + hair
+        #also add h and w for the extended reach of course
+        face_result = img[y-50:y+h+10, x-30:x+w+30]
+    except:
+        print("No face found")
+        img_x = 200
+        img_y = 200
+        img_w = 100 
+        img_h = 100
+        face_result = np.zeros((300, 300, 3), dtype=np.uint8)
+    #variables for resizing
+
+
+    # print(img_x, img_y, img_x + w, img_y + h)
+
+
+    #change pixel values here, for specific dimension, for now 300,300
+    new_size = (100, 100)
+
+    #output is this for face detection
+    face_result = cv2.resize(face_result, new_size, fx=0.25, fy=0.25, interpolation=cv2.INTER_LINEAR)
+
+    return cv2.cvtColor(face_result, cv2.COLOR_BGR2RGB)
+
 
 #functions for OCR
 def performOCR(img=None, grayscale=False):
@@ -219,41 +266,8 @@ while True:
 
             #convert to grayscale
             img = cv2.imread(values["-FILE-"])
+            face_result = face_detect(img)
 
-            #Initial Resize
-            new_size = (0, 0)
-            img = cv2.resize(img, new_size, fx=0.25, fy=0.25, interpolation=cv2.INTER_LINEAR)
-            img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-            #lets detect
-            faces = face_cascade.detectMultiScale(img_gray, 1.1, 4)
-
-            #variables for resizing
-            img_x = 0
-            img_y = 0
-            img_w = 0
-            img_h = 0
-            for (x, y, w, h) in faces:
-
-                # cv2.rectangle(image, (x, y), (x+w, y+h), (255, 0, 0), 2)
-                img_x = x
-                img_y = y
-                img_w = w 
-                img_h = h
-
-            # print(img_x, img_y, img_x + w, img_y + h)
-
-            #readjust ys and xs by 60 pixels to accomodate whole face + hair
-            #also add h and w for the extended reach of course
-            face_result = img[y-50:y+h+10, x-30:x+w+30]
-
-            #change pixel values here, for specific dimension, for now 300,300
-            new_size = (100, 100)
-
-            #output is this for face detection
-            face_result = cv2.resize(face_result, new_size, fx=0.25, fy=0.25, interpolation=cv2.INTER_LINEAR)
-
-            face_result = cv2.cvtColor(face_result, cv2.COLOR_BGR2RGB)
 
 
             #-------------------------#
